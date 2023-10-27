@@ -14,7 +14,8 @@ import matplotlib.animation as animation
 from IPython.display import HTML
 import warnings
 import seaborn as sns
-def TicketVerkaufSim(NUM_FSA,NUM_TG,P,FGZ_PRO_MIN_NORMAL,FGZ_PRO_MIN_SZ,TICKET_PRO_MIN,TICKET_PRO_MIN_TG,SIM_TIME,STOSSZEITEN):
+
+def ticket_verkauf_sim(NUM_FSA,NUM_TG,P,FGZ_PRO_MIN_NORMAL,FGZ_PRO_MIN_SZ,TICKET_PRO_MIN,TICKET_PRO_MIN_TG,SIM_TIME,STOSSZEITEN):
     """
     Simulate a ticket selling process in a public transportation system with various parameters.
 
@@ -161,11 +162,11 @@ def TicketVerkaufSim(NUM_FSA,NUM_TG,P,FGZ_PRO_MIN_NORMAL,FGZ_PRO_MIN_SZ,TICKET_P
             
             # Determine whether the passenger chooses T&G or FSA based on probability
             
-            TouchandGo=assign_tag(P)
+            touch_and_go=assign_tag(P)
             
             # Choose a machine based on queue lengths and choice
-            if NUM_TG==0 or TouchandGo==0:
-                TouchandGo=assign_tag(0)
+            if NUM_TG==0 or touch_and_go==0:
+                touch_and_go=assign_tag(0)
                 choice=[k for k,v in sorted(QlengthFSA.items(), key=lambda a:a[1])][0]
             else:
 
@@ -186,7 +187,7 @@ def TicketVerkaufSim(NUM_FSA,NUM_TG,P,FGZ_PRO_MIN_NORMAL,FGZ_PRO_MIN_SZ,TICKET_P
 
                 wait_t[fg]=(t_service-t_arrival)
                 # Determine service time based on machine type
-                if NUM_TG==0 or TouchandGo==0:
+                if NUM_TG==0 or touch_and_go==0:
                     yield env.timeout(assign_fsa(TICKET_PRO_MIN))
                 else:
                     yield env.timeout(assign_fsa(TICKET_PRO_MIN_TG))
@@ -369,7 +370,7 @@ def mc_sim(NUM_FSA, NUM_TG, P, FGZ_PRO_MIN_NORMAL, FGZ_PRO_MIN_SZ, TICKET_PRO_MI
 
     for i in range(NUM_RUNS):
         # Run a single simulation
-        wait_t, queues, arr_t, fg_ankommen, service_t, start_t, choices, fg_beended = TicketVerkaufSim(NUM_FSA, NUM_TG, P, FGZ_PRO_MIN_NORMAL, FGZ_PRO_MIN_SZ, TICKET_PRO_MIN, TICKET_PRO_MIN_TG, SIM_TIME, STOSSZEITEN)
+        wait_t, queues, arr_t, fg_ankommen, service_t, start_t, choices, fg_beended = ticket_verkauf_sim(NUM_FSA, NUM_TG, P, FGZ_PRO_MIN_NORMAL, FGZ_PRO_MIN_SZ, TICKET_PRO_MIN, TICKET_PRO_MIN_TG, SIM_TIME, STOSSZEITEN)
 
         # Create a summary of the simulation results
         output_sim[i] = create_output(fg_ankommen, start_t, choices, service_t, wait_t, fg_beended, SIM_TIME, NUM_FSA, NUM_TG)
@@ -589,7 +590,7 @@ def video(queues_dict, df_output, NUM_FSA, NUM_TG, video_flag):
 
 
 
-def RunSim(NUM_FSA,NUM_TG,P,FGZ_PRO_MIN_NORMAL,FGZ_PRO_MIN_SZ,TICKET_PRO_MIN,TICKET_PRO_MIN_TG,SIM_TIME,STOSSZEITEN,NUM_RUNS,video_flag='N'):
+def run_sim(NUM_FSA,NUM_TG,P,FGZ_PRO_MIN_NORMAL,FGZ_PRO_MIN_SZ,TICKET_PRO_MIN,TICKET_PRO_MIN_TG,SIM_TIME,STOSSZEITEN,NUM_RUNS,video_flag='N'):
         """
         Run a simulation of a ticket selling process in a public transportation system with various parameters.
 
